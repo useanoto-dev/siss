@@ -44,6 +44,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { upsertTransaction } from "../_actions/upsert-transaction";
 import { toast } from "sonner";
+import { useTransition } from "react";
+import { Loader2Icon } from "lucide-react";
 
 interface UpsertTransactionDialogProps {
   isOpen: boolean;
@@ -85,6 +87,7 @@ const UpsertTransactionDialog = ({
   transactionId,
   setIsOpen,
 }: UpsertTransactionDialogProps) => {
+  const [isPending, startTransition] = useTransition();
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues ?? {
@@ -97,19 +100,20 @@ const UpsertTransactionDialog = ({
     },
   });
 
-  const onSubmit = async (data: FormSchema) => {
-    try {
-      await upsertTransaction({ ...data, id: transactionId });
-      toast.success(isUpdate ? "Transação atualizada." : "Transação criada.");
-      setIsOpen(false);
-      form.reset();
-    } catch (error) {
-      console.error(error);
-      toast.error("Erro ao salvar transação. Tente novamente.");
-    }
-  };
-
   const isUpdate = Boolean(transactionId);
+
+  const onSubmit = (data: FormSchema) => {
+    startTransition(async () => {
+      try {
+        await upsertTransaction({ ...data, id: transactionId });
+        toast.success(isUpdate ? "Transação atualizada." : "Transação criada.");
+        setIsOpen(false);
+        form.reset();
+      } catch {
+        toast.error("Erro ao salvar transação. Tente novamente.");
+      }
+    });
+  };
 
   return (
     <Dialog
@@ -131,7 +135,10 @@ const UpsertTransactionDialog = ({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 sm:space-y-6"
+          >
             <FormField
               control={form.control}
               name="name"
@@ -260,11 +267,12 @@ const UpsertTransactionDialog = ({
             />
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="outline">
+                <Button type="button" variant="outline" disabled={isPending}>
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type="submit">
+              <Button type="submit" disabled={isPending}>
+                {isPending && <Loader2Icon className="animate-spin" />}
                 {isUpdate ? "Atualizar" : "Adicionar"}
               </Button>
             </DialogFooter>

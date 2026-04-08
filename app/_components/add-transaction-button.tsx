@@ -22,24 +22,31 @@ const AddTransactionButton = ({
 
   return (
     <>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              className="rounded-full font-bold"
-              onClick={() => setDialogIsOpen(true)}
-              disabled={!userCanAddTransaction}
-            >
-              Adicionar transação
-              <ArrowDownUpIcon />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>
-            {!userCanAddTransaction &&
-              "Você atingiu o limite de transações. Atualize seu plano para criar transações ilimitadas."}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="flex flex-col items-end gap-1">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                className="rounded-full font-bold"
+                onClick={() => setDialogIsOpen(true)}
+                disabled={!userCanAddTransaction}
+              >
+                Adicionar transação
+                <ArrowDownUpIcon />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {!userCanAddTransaction &&
+                "Você atingiu o limite de transações. Atualize seu plano para criar transações ilimitadas."}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        {!userCanAddTransaction && (
+          <p className="text-xs text-muted-foreground md:hidden">
+            Limite atingido. Atualize seu plano.
+          </p>
+        )}
+      </div>
       <UpsertTransactionDialog
         isOpen={dialogIsOpen}
         setIsOpen={setDialogIsOpen}

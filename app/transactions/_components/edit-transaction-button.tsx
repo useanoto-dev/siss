@@ -19,9 +19,10 @@ const EditTransactionButton = ({ transaction }: EditTransactionButtonProps) => {
         variant="ghost"
         size="icon"
         className="text-muted-foreground"
+        aria-label="Editar transação"
         onClick={() => setDialogIsOpen(true)}
       >
-        <PencilIcon />
+        <PencilIcon size={16} />
       </Button>
       <UpsertTransactionDialog
         isOpen={dialogIsOpen}
