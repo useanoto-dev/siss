@@ -18,73 +18,72 @@ export const getDashboard = async (month: string) => {
       lte: endOfMonth(monthDate),
     },
   };
-  const depositsTotal = Number(
-    (
-      await db.transaction.aggregate({
-        where: { ...where, type: "DEPOSIT" },
-        _sum: { amount: true },
-      })
-    )?._sum?.amount,
-  );
-  const investmentsTotal = Number(
-    (
-      await db.transaction.aggregate({
-        where: { ...where, type: "INVESTMENT" },
-        _sum: { amount: true },
-      })
-    )?._sum?.amount,
-  );
-  const expensesTotal = Number(
-    (
-      await db.transaction.aggregate({
-        where: { ...where, type: "EXPENSE" },
-        _sum: { amount: true },
-      })
-    )?._sum?.amount,
-  );
+
+  // Run all 5 queries in parallel instead of sequentially
+  const [
+    depositsSumResult,
+    investmentsSumResult,
+    expensesSumResult,
+    expensesByCategory,
+    lastTransactions,
+  ] = await Promise.all([
+    db.transaction.aggregate({
+      where: { ...where, type: "DEPOSIT" },
+      _sum: { amount: true },
+    }),
+    db.transaction.aggregate({
+      where: { ...where, type: "INVESTMENT" },
+      _sum: { amount: true },
+    }),
+    db.transaction.aggregate({
+      where: { ...where, type: "EXPENSE" },
+      _sum: { amount: true },
+    }),
+    db.transaction.groupBy({
+      by: ["category"],
+      where: { ...where, type: TransactionType.EXPENSE },
+      _sum: { amount: true },
+    }),
+    db.transaction.findMany({
+      where,
+      orderBy: { date: "desc" },
+      take: 15,
+    }),
+  ]);
+
+  const depositsTotal = Number(depositsSumResult._sum.amount ?? 0);
+  const investmentsTotal = Number(investmentsSumResult._sum.amount ?? 0);
+  const expensesTotal = Number(expensesSumResult._sum.amount ?? 0);
   const balance = depositsTotal - investmentsTotal - expensesTotal;
-  const transactionsTotal = Number(
-    (
-      await db.transaction.aggregate({
-        where,
-        _sum: { amount: true },
-      })
-    )._sum.amount,
-  );
+
+  // Computed from existing data — no extra DB round trip needed
+  const transactionsTotal = depositsTotal + investmentsTotal + expensesTotal;
+
+  // Guard: avoid NaN when there are no transactions in the selected month
+  const safeTotal = transactionsTotal === 0 ? 1 : transactionsTotal;
   const typesPercentage: TransactionPercentagePerType = {
     [TransactionType.DEPOSIT]: Math.round(
-      (Number(depositsTotal || 0) / Number(transactionsTotal)) * 100,
+      (depositsTotal / safeTotal) * 100,
     ),
     [TransactionType.EXPENSE]: Math.round(
-      (Number(expensesTotal || 0) / Number(transactionsTotal)) * 100,
+      (expensesTotal / safeTotal) * 100,
     ),
     [TransactionType.INVESTMENT]: Math.round(
-      (Number(investmentsTotal || 0) / Number(transactionsTotal)) * 100,
+      (investmentsTotal / safeTotal) * 100,
     ),
   };
-  const totalExpensePerCategory: TotalExpensePerCategory[] = (
-    await db.transaction.groupBy({
-      by: ["category"],
-      where: {
-        ...where,
-        type: TransactionType.EXPENSE,
-      },
-      _sum: {
-        amount: true,
-      },
-    })
-  ).map((category) => ({
-    category: category.category,
-    totalAmount: Number(category._sum.amount),
-    percentageOfTotal: Math.round(
-      (Number(category._sum.amount) / Number(expensesTotal)) * 100,
-    ),
-  }));
-  const lastTransactions = await db.transaction.findMany({
-    where,
-    orderBy: { date: "desc" },
-    take: 15,
-  });
+
+  const safeExpensesTotal = expensesTotal === 0 ? 1 : expensesTotal;
+  const totalExpensePerCategory: TotalExpensePerCategory[] = expensesByCategory.map(
+    (category) => ({
+      category: category.category,
+      totalAmount: Number(category._sum.amount),
+      percentageOfTotal: Math.round(
+        (Number(category._sum.amount) / safeExpensesTotal) * 100,
+      ),
+    }),
+  );
+
   return {
     balance,
     depositsTotal,

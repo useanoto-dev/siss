@@ -1,19 +1,19 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import Stripe from "stripe";
+import { stripe } from "@/app/_lib/stripe";
 
 export const createStripeCheckout = async () => {
   const { userId } = await auth();
   if (!userId) {
     throw new Error("Unauthorized");
   }
-  if (!process.env.STRIPE_SECRET_KEY) {
-    throw new Error("Stripe secret key not found");
+  if (!process.env.STRIPE_PREMIUM_PLAN_PRICE_ID) {
+    throw new Error("Stripe premium plan price ID not found");
   }
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2024-10-28.acacia",
-  });
+  if (!process.env.NEXT_PUBLIC_APP_URL) {
+    throw new Error("App URL not configured");
+  }
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "subscription",

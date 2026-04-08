@@ -28,6 +28,7 @@ model Transaction {
 
   @@index([userId, date])
   @@index([userId, type])
+  @@index([userId, type, date])
 }
 
 enum TransactionType {

@@ -1,4 +1,4 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Navbar from "../_components/navbar";
 import SummaryCards from "./_components/summary-cards";
@@ -10,6 +10,7 @@ import ExpensesPerCategory from "./_components/expenses-per-category";
 import LastTransactions from "./_components/last-transactions";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
 import AiReportButton from "./_components/ai-report-button";
+import { getCurrentUser } from "../_lib/auth";
 
 interface HomeProps {
   searchParams: {
@@ -26,12 +27,19 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   if (monthIsInvalid) {
     redirect(`?month=${String(new Date().getMonth() + 1).padStart(2, "0")}`);
   }
-  const dashboard = await getDashboard(month);
-  const userCanAddTransaction = await canUserAddTransaction();
-  const user = await clerkClient().users.getUser(userId);
+
+  // Run dashboard data + user check in parallel; getCurrentUser is cached so
+  // canUserAddTransaction (called inside) reuses the same Clerk API response.
+  const [dashboard, userCanAddTransaction, user] = await Promise.all([
+    getDashboard(month),
+    canUserAddTransaction(),
+    getCurrentUser(),
+  ]);
+
   if (!user) {
     redirect("/login");
   }
+
   return (
     <>
       <Navbar />
