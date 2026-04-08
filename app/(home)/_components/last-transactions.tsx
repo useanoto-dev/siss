@@ -55,8 +55,8 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                   alt={transaction.paymentMethod}
                 />
               </div>
-              <div>
-                <p className="text-sm font-bold">{transaction.name}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold">{transaction.name}</p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(transaction.date).toLocaleDateString("pt-BR", {
                     day: "2-digit",
@@ -66,7 +66,7 @@ const LastTransactions = ({ lastTransactions }: LastTransactionsProps) => {
                 </p>
               </div>
             </div>
-            <p className={`text-sm font-bold ${getAmountColor(transaction)}`}>
+            <p className={`shrink-0 text-sm font-bold ${getAmountColor(transaction)}`}>
               {getAmountPrefix(transaction)}
               {formatCurrency(Number(transaction.amount))}
             </p>

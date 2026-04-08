@@ -52,7 +52,7 @@ const AiReportButton = ({ month, hasPremiumPlan }: AiReportButtonProps) => {
           <BotIcon />
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[600px]">
+      <DialogContent className="w-[calc(100vw-2rem)] max-w-[600px] sm:w-full">
         {hasPremiumPlan ? (
           <>
             <DialogHeader>

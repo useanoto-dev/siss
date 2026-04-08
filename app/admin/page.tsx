@@ -36,7 +36,7 @@ const AdminPage = async () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-2xl font-bold">Administração</h1>
         <p className="text-muted-foreground">
@@ -45,7 +45,7 @@ const AdminPage = async () => {
       </div>
 
       <div className="rounded-lg border">
-        <div className="border-b px-6 py-4">
+        <div className="border-b px-4 py-4 sm:px-6">
           <h2 className="font-semibold">
             Usuários{" "}
             <span className="text-muted-foreground">
@@ -53,7 +53,7 @@ const AdminPage = async () => {
             </span>
           </h2>
         </div>
-        <div className="p-2">
+        <div className="overflow-x-auto p-2">
           <UsersTable users={users} />
         </div>
       </div>

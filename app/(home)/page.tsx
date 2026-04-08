@@ -43,8 +43,9 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   return (
     <>
       <Navbar />
-      <div className="flex h-full flex-col space-y-6 overflow-hidden p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex h-full flex-col space-y-6 overflow-hidden p-4 sm:p-6">
+        {/* Header: título + ações */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex items-center gap-3">
             <AiReportButton
@@ -56,6 +57,7 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
             <TimeSelect />
           </div>
         </div>
+        {/* Grid principal: 1 coluna mobile, 2 colunas em lg */}
         <div className="grid h-full grid-cols-1 gap-6 overflow-hidden lg:grid-cols-[2fr,1fr]">
           <div className="flex flex-col gap-6 overflow-hidden">
             <SummaryCards
@@ -63,7 +65,8 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
               {...dashboard}
               userCanAddTransaction={userCanAddTransaction}
             />
-            <div className="grid h-full grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
+            {/* Pie chart + categorias: empilha em mobile, lado a lado em md, 3 colunas em lg */}
+            <div className="grid h-full grid-cols-1 gap-6 overflow-hidden sm:grid-cols-2 lg:grid-cols-3">
               <TransactionsPieChart {...dashboard} />
               <ExpensesPerCategory
                 expensesPerCategory={dashboard.totalExpensePerCategory}

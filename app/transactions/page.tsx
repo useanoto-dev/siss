@@ -41,13 +41,15 @@ const TransactionsPage = async ({
   return (
     <>
       <Navbar />
-      <div className="space-y-6 overflow-hidden p-6">
-        <div className="flex w-full items-center justify-between">
+      <div className="space-y-6 overflow-hidden p-4 sm:p-6">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Transações</h1>
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
         </div>
-        <ScrollArea>
-          <DataTable columns={transactionColumns} data={transactions} />
+        <ScrollArea className="w-full">
+          <div className="overflow-x-auto">
+            <DataTable columns={transactionColumns} data={transactions} />
+          </div>
         </ScrollArea>
         {totalPages > 1 && (
           <div className="flex items-center justify-between text-sm text-muted-foreground">

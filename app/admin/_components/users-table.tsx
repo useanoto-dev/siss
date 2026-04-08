@@ -51,13 +51,13 @@ const UsersTable = ({ users }: UsersTableProps) => {
   };
 
   return (
-    <Table>
+    <Table className="min-w-[640px]">
       <TableHeader>
         <TableRow>
           <TableHead>Nome</TableHead>
-          <TableHead>Email</TableHead>
+          <TableHead className="hidden sm:table-cell">Email</TableHead>
           <TableHead>Plano</TableHead>
-          <TableHead>Cadastro</TableHead>
+          <TableHead className="hidden md:table-cell">Cadastro</TableHead>
           <TableHead className="text-right">Transações</TableHead>
           <TableHead className="text-right">Ação</TableHead>
         </TableRow>
@@ -70,7 +70,7 @@ const UsersTable = ({ users }: UsersTableProps) => {
           return (
             <TableRow key={user.id}>
               <TableCell className="font-medium">{user.name}</TableCell>
-              <TableCell className="text-muted-foreground">
+              <TableCell className="hidden text-muted-foreground sm:table-cell">
                 {user.email}
               </TableCell>
               <TableCell>
@@ -82,7 +82,7 @@ const UsersTable = ({ users }: UsersTableProps) => {
                   <Badge variant="secondary">Free</Badge>
                 )}
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden md:table-cell">
                 {new Date(user.createdAt).toLocaleDateString("pt-BR")}
               </TableCell>
               <TableCell className="text-right">
@@ -118,6 +118,7 @@ const UsersTable = ({ users }: UsersTableProps) => {
               colSpan={6}
               className="py-8 text-center text-muted-foreground"
             >
+
               Nenhum usuário encontrado.
             </TableCell>
           </TableRow>
