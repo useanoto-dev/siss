@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/app/_components/ui/badge";
 import { Button } from "@/app/_components/ui/button";
 import { setUserPlan } from "../_actions/manage-plan";
+import { toast } from "sonner";
 
 export interface UserRow {
   id: string;
@@ -35,8 +36,14 @@ const UsersTable = ({ users }: UsersTableProps) => {
     startTransition(async () => {
       try {
         await setUserPlan(userId, plan);
+        toast.success(
+          plan === "premium"
+            ? "Usuário promovido a Premium."
+            : "Plano Premium removido.",
+        );
       } catch (error) {
         console.error("Erro ao atualizar plano:", error);
+        toast.error("Erro ao atualizar plano. Tente novamente.");
       } finally {
         setLoadingUserId(null);
       }
