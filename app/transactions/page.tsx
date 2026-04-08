@@ -8,21 +8,40 @@ import { redirect } from "next/navigation";
 import { ScrollArea } from "../_components/ui/scroll-area";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
 
-const TransactionsPage = async () => {
+const PAGE_SIZE = 50;
+
+interface TransactionsPageProps {
+  searchParams: { page?: string };
+}
+
+const TransactionsPage = async ({
+  searchParams: { page },
+}: TransactionsPageProps) => {
   const { userId } = await auth();
   if (!userId) {
     redirect("/login");
   }
-  const transactions = await db.transaction.findMany({
-    where: { userId },
-    orderBy: { date: "desc" },
-  });
-  const userCanAddTransaction = await canUserAddTransaction();
+
+  const currentPage = Math.max(1, parseInt(page ?? "1"));
+  const skip = (currentPage - 1) * PAGE_SIZE;
+
+  const [transactions, totalCount, userCanAddTransaction] = await Promise.all([
+    db.transaction.findMany({
+      where: { userId },
+      orderBy: { date: "desc" },
+      take: PAGE_SIZE,
+      skip,
+    }),
+    db.transaction.count({ where: { userId } }),
+    canUserAddTransaction(),
+  ]);
+
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
   return (
     <>
       <Navbar />
       <div className="space-y-6 overflow-hidden p-6">
-        {/* TÍTULO E BOTÃO */}
         <div className="flex w-full items-center justify-between">
           <h1 className="text-2xl font-bold">Transações</h1>
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
@@ -30,6 +49,32 @@ const TransactionsPage = async () => {
         <ScrollArea>
           <DataTable columns={transactionColumns} data={transactions} />
         </ScrollArea>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between text-sm text-muted-foreground">
+            <span>
+              {skip + 1}–{Math.min(skip + PAGE_SIZE, totalCount)} de{" "}
+              {totalCount} transações
+            </span>
+            <div className="flex gap-2">
+              {currentPage > 1 && (
+                <a
+                  href={`/transactions?page=${currentPage - 1}`}
+                  className="rounded border border-solid px-3 py-1 hover:bg-muted"
+                >
+                  Anterior
+                </a>
+              )}
+              {currentPage < totalPages && (
+                <a
+                  href={`/transactions?page=${currentPage + 1}`}
+                  className="rounded border border-solid px-3 py-1 hover:bg-muted"
+                >
+                  Próxima
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

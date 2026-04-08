@@ -6,6 +6,7 @@ import {
 import { z } from "zod";
 
 export const upsertTransactionSchema = z.object({
+  id: z.string().uuid().optional(),
   name: z.string().trim().min(1),
   amount: z.number().positive(),
   type: z.nativeEnum(TransactionType),
@@ -13,3 +14,5 @@ export const upsertTransactionSchema = z.object({
   paymentMethod: z.nativeEnum(TransactionPaymentMethod),
   date: z.date(),
 });
+
+export type UpsertTransactionParams = z.infer<typeof upsertTransactionSchema>;

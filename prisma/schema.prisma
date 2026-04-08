@@ -26,6 +26,7 @@ model Transaction {
   updatedAt     DateTime                 @updatedAt
   userId        String
 
+  @@index([userId])
   @@index([userId, date])
   @@index([userId, type])
   @@index([userId, type, date])

@@ -2,24 +2,9 @@
 
 import { db } from "@/app/_lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import {
-  TransactionCategory,
-  TransactionPaymentMethod,
-  TransactionType,
-} from "@prisma/client";
-import { upsertTransactionSchema } from "./schema";
+import { upsertTransactionSchema, UpsertTransactionParams } from "./schema";
 import { revalidatePath } from "next/cache";
 import { canUserAddTransaction } from "@/app/_data/can-user-add-transaction";
-
-interface UpsertTransactionParams {
-  id?: string;
-  name: string;
-  amount: number;
-  type: TransactionType;
-  category: TransactionCategory;
-  paymentMethod: TransactionPaymentMethod;
-  date: Date;
-}
 
 export const upsertTransaction = async (params: UpsertTransactionParams) => {
   upsertTransactionSchema.parse(params);
@@ -30,7 +15,6 @@ export const upsertTransaction = async (params: UpsertTransactionParams) => {
 
   const isCreating = !params.id;
 
-  // Enforce free plan limit on the server — cannot be bypassed from the client
   if (isCreating) {
     const userCanAdd = await canUserAddTransaction();
     if (!userCanAdd) {
