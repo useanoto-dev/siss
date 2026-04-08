@@ -1,6 +1,6 @@
 import { clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import { stripe } from "@/app/_lib/stripe";
+import { getStripe } from "@/app/_lib/stripe";
 
 export const POST = async (request: Request) => {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
@@ -11,12 +11,15 @@ export const POST = async (request: Request) => {
   }
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
-    return NextResponse.json({ error: "Missing stripe-signature" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing stripe-signature" },
+      { status: 400 },
+    );
   }
   const text = await request.text();
   let event;
   try {
-    event = stripe.webhooks.constructEvent(
+    event = getStripe().webhooks.constructEvent(
       text,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
@@ -30,7 +33,8 @@ export const POST = async (request: Request) => {
 
   switch (event.type) {
     case "invoice.paid": {
-      const { customer, subscription, subscription_details } = event.data.object;
+      const { customer, subscription, subscription_details } =
+        event.data.object;
       const clerkUserId = subscription_details?.metadata?.clerk_user_id;
       if (!clerkUserId) {
         return NextResponse.json(
@@ -50,7 +54,7 @@ export const POST = async (request: Request) => {
       break;
     }
     case "customer.subscription.deleted": {
-      const subscription = await stripe.subscriptions.retrieve(
+      const subscription = await getStripe().subscriptions.retrieve(
         event.data.object.id,
       );
       const clerkUserId = subscription.metadata.clerk_user_id;

@@ -1,7 +1,7 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { stripe } from "@/app/_lib/stripe";
+import { getStripe } from "@/app/_lib/stripe";
 
 export const createStripeCheckout = async () => {
   const { userId } = await auth();
@@ -14,7 +14,7 @@ export const createStripeCheckout = async () => {
   if (!process.env.NEXT_PUBLIC_APP_URL) {
     throw new Error("App URL not configured");
   }
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "subscription",
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/`,
