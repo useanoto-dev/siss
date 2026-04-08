@@ -22,12 +22,12 @@ const AddTransactionButton = ({
 
   return (
     <>
-      <div className="flex flex-col items-end gap-1">
+      <div className="flex w-full flex-col gap-1 sm:w-auto sm:items-end">
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                className="rounded-full font-bold"
+                className="w-full rounded-full font-bold sm:w-auto"
                 onClick={() => setDialogIsOpen(true)}
                 disabled={!userCanAddTransaction}
               >

@@ -43,11 +43,11 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
   return (
     <>
       <Navbar />
-      <div className="flex h-full flex-col space-y-6 overflow-hidden p-4 sm:p-6">
+      <div className="flex flex-col space-y-4 overflow-auto p-4 sm:space-y-6 sm:p-6 lg:h-full lg:overflow-hidden">
         {/* Header: título + ações */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <AiReportButton
               month={month}
               hasPremiumPlan={
@@ -58,15 +58,15 @@ const Home = async ({ searchParams: { month } }: HomeProps) => {
           </div>
         </div>
         {/* Grid principal: 1 coluna mobile, 2 colunas em lg */}
-        <div className="grid h-full grid-cols-1 gap-6 overflow-hidden lg:grid-cols-[2fr,1fr]">
-          <div className="flex flex-col gap-6 overflow-hidden">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:h-full lg:grid-cols-[2fr,1fr] lg:overflow-hidden">
+          <div className="flex flex-col gap-4 sm:gap-6 lg:overflow-hidden">
             <SummaryCards
               month={month}
               {...dashboard}
               userCanAddTransaction={userCanAddTransaction}
             />
-            {/* Pie chart + categorias: empilha em mobile, lado a lado em md, 3 colunas em lg */}
-            <div className="grid h-full grid-cols-1 gap-6 overflow-hidden sm:grid-cols-2 lg:grid-cols-3">
+            {/* Pie chart + categorias: empilha em mobile, lado a lado em sm, 3 colunas em lg */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:h-full lg:grid-cols-3 lg:overflow-hidden">
               <TransactionsPieChart {...dashboard} />
               <ExpensesPerCategory
                 expensesPerCategory={dashboard.totalExpensePerCategory}
