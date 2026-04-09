@@ -9,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
 import {
   Form,
@@ -125,7 +124,6 @@ const UpsertTransactionDialog = ({
         }
       }}
     >
-      <DialogTrigger asChild></DialogTrigger>
       <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[500px] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>

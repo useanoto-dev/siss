@@ -8,16 +8,17 @@ import { cn } from "@/app/_lib/utils";
 import { Button } from "./button";
 import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { SelectSingleEventHandler } from "react-day-picker";
 
 interface DatePickerProps {
   value?: Date;
-  onChange?: SelectSingleEventHandler;
+  onChange?: (date: Date) => void;
 }
 
 export const DatePicker = ({ value, onChange }: DatePickerProps) => {
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
@@ -42,7 +43,12 @@ export const DatePicker = ({ value, onChange }: DatePickerProps) => {
         <Calendar
           mode="single"
           selected={value}
-          onSelect={onChange}
+          onSelect={(date) => {
+            if (date) {
+              onChange?.(date);
+              setOpen(false);
+            }
+          }}
           initialFocus
           locale={ptBR}
         />

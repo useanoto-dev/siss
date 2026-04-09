@@ -9,11 +9,7 @@ import {
 } from "@/app/_constants/transactions";
 import EditTransactionButton from "../_components/edit-transaction-button";
 import DeleteTransactionButton from "../_components/delete-transaction-button";
-
-const BRL_FORMATTER = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+import { formatCurrency } from "@/app/_utils/currency";
 
 export const transactionColumns: ColumnDef<Transaction>[] = [
   {
@@ -53,7 +49,7 @@ export const transactionColumns: ColumnDef<Transaction>[] = [
     accessorKey: "amount",
     header: "Valor",
     cell: ({ row: { original: transaction } }) =>
-      BRL_FORMATTER.format(Number(transaction.amount)),
+      formatCurrency(Number(transaction.amount)),
   },
   {
     accessorKey: "actions",

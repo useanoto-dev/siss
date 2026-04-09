@@ -7,6 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
 import MobileTransactionList from "./_components/mobile-transaction-list";
+import Link from "next/link";
 
 const PAGE_SIZE = 50;
 
@@ -63,20 +64,20 @@ const TransactionsPage = async ({
             </span>
             <div className="flex gap-2">
               {currentPage > 1 && (
-                <a
+                <Link
                   href={`/transactions?page=${currentPage - 1}`}
                   className="rounded border border-solid px-3 py-1 hover:bg-muted"
                 >
                   Anterior
-                </a>
+                </Link>
               )}
               {currentPage < totalPages && (
-                <a
+                <Link
                   href={`/transactions?page=${currentPage + 1}`}
                   className="rounded border border-solid px-3 py-1 hover:bg-muted"
                 >
                   Próxima
-                </a>
+                </Link>
               )}
             </div>
           </div>

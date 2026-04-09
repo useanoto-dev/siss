@@ -5,11 +5,7 @@ import {
 } from "@/app/_constants/transactions";
 import EditTransactionButton from "./edit-transaction-button";
 import DeleteTransactionButton from "./delete-transaction-button";
-
-const BRL_FORMATTER = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+import { formatCurrency } from "@/app/_utils/currency";
 
 interface MobileTransactionListProps {
   transactions: Transaction[];
@@ -82,7 +78,7 @@ const MobileTransactionList = ({
             <div className="flex shrink-0 flex-col items-end gap-1">
               <p className={`text-sm font-bold tabular-nums ${amountColor}`}>
                 {prefix}
-                {BRL_FORMATTER.format(Number(transaction.amount))}
+                {formatCurrency(Number(transaction.amount))}
               </p>
               <div className="-mr-2 flex">
                 <EditTransactionButton transaction={transaction} />
