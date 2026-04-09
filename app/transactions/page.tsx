@@ -6,6 +6,7 @@ import Navbar from "../_components/navbar";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { canUserAddTransaction } from "../_data/can-user-add-transaction";
+import MobileTransactionList from "./_components/mobile-transaction-list";
 
 const PAGE_SIZE = 50;
 
@@ -45,7 +46,13 @@ const TransactionsPage = async ({
           <h1 className="text-2xl font-bold">Transações</h1>
           <AddTransactionButton userCanAddTransaction={userCanAddTransaction} />
         </div>
-        <div className="overflow-x-auto rounded-md border">
+        {/* Mobile: lista de cards */}
+        <div className="sm:hidden">
+          <MobileTransactionList transactions={transactions} />
+        </div>
+
+        {/* Desktop: tabela completa */}
+        <div className="hidden overflow-x-auto rounded-md border sm:block">
           <DataTable columns={transactionColumns} data={transactions} />
         </div>
         {totalPages > 1 && (

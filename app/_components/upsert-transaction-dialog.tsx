@@ -126,7 +126,7 @@ const UpsertTransactionDialog = ({
       }}
     >
       <DialogTrigger asChild></DialogTrigger>
-      <DialogContent className="w-[calc(100vw-2rem)] max-w-[500px] sm:w-full">
+      <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[500px] overflow-y-auto sm:w-full">
         <DialogHeader>
           <DialogTitle>
             {isUpdate ? "Atualizar" : "Criar"} transação
@@ -265,13 +265,22 @@ const UpsertTransactionDialog = ({
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:gap-0">
               <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isPending}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isPending}
+                  className="w-full sm:w-auto"
+                >
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type="submit" disabled={isPending}>
+              <Button
+                type="submit"
+                disabled={isPending}
+                className="w-full sm:w-auto"
+              >
                 {isPending && <Loader2Icon className="animate-spin" />}
                 {isUpdate ? "Atualizar" : "Adicionar"}
               </Button>
