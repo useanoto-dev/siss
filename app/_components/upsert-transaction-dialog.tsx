@@ -124,7 +124,10 @@ const UpsertTransactionDialog = ({
         }
       }}
     >
-      <DialogContent className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[500px] overflow-y-auto sm:w-full">
+      <DialogContent
+        className="max-h-[90dvh] w-[calc(100vw-2rem)] max-w-[500px] overflow-y-auto sm:w-full"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>
             {isUpdate ? "Atualizar" : "Criar"} transação

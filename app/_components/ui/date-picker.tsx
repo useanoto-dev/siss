@@ -49,7 +49,6 @@ export const DatePicker = ({ value, onChange }: DatePickerProps) => {
               setOpen(false);
             }
           }}
-          initialFocus
           locale={ptBR}
         />
       </PopoverContent>
